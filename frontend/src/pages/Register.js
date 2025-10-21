@@ -37,11 +37,22 @@ const Register = () => {
     { name: 'Wisconsin', code: 'WI' }, { name: 'Wyoming', code: 'WY' }
   ];
 
+  // Add the missing handleChange function
   const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+    const { name, value } = e.target;
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
+  };
+
+  // Handle zip code separately to ensure it's only numbers
+  const handleZipCodeChange = (e) => {
+    const value = e.target.value.replace(/\D/g, '').slice(0, 5);
+    setFormData(prevState => ({
+      ...prevState,
+      zipCode: value
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -49,7 +60,12 @@ const Register = () => {
     setIsSubmitting(true);
     
     try {
-      await axios.post('/api/bookkeepers/register', formData);
+      console.log('Sending registration data:', formData);
+      
+      const response = await axios.post('/api/bookkeepers/register', formData);
+      
+      console.log('Registration response:', response);
+      
       setSubmitMessage('Thank you for registering! Your listing will be available soon.');
       setFormData({
         fullName: '',
@@ -64,7 +80,16 @@ const Register = () => {
         companyAddress: ''
       });
     } catch (error) {
-      setSubmitMessage('Sorry, there was an error with your registration. Please try again.');
+      console.error('Registration error details:', error);
+      console.error('Error response:', error.response);
+      
+      if (error.response && error.response.data && error.response.data.errors) {
+        setSubmitMessage(`Validation errors: ${error.response.data.errors.join(', ')}`);
+      } else if (error.response && error.response.data && error.response.data.message) {
+        setSubmitMessage(`Error: ${error.response.data.message}`);
+      } else {
+        setSubmitMessage('Sorry, there was an error with your registration. Please try again.');
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -78,7 +103,7 @@ const Register = () => {
         
         <form className="registration-form" onSubmit={handleSubmit}>
           {submitMessage && (
-            <div className={`submit-message ${submitMessage.includes('error') ? 'error' : 'success'}`}>
+            <div className={`submit-message ${submitMessage.includes('error') || submitMessage.includes('Error') ? 'error' : 'success'}`}>
               {submitMessage}
             </div>
           )}
@@ -130,7 +155,7 @@ const Register = () => {
                 id="zipCode"
                 name="zipCode"
                 value={formData.zipCode}
-                onChange={(e) => setFormData({...formData, zipCode: e.target.value.replace(/\D/g, '').slice(0, 5)})}
+                onChange={handleZipCodeChange}
                 maxLength="5"
                 pattern="[0-9]{5}"
                 title="5-digit zip code"
