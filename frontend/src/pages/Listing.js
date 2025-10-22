@@ -21,22 +21,26 @@ const Listing = () => {
   }, [stateFromQuery, zipFromQuery]);
 
   const fetchBookkeepers = async (state, zipCode) => {
-    setLoading(true);
-    setError('');
-    try {
-      let url = `/api/bookkeepers?state=${state}`;
-      if (zipCode) {
-        url += `&zipCode=${zipCode}`;
-      }
-      
-      const response = await axios.get(url);
-      setBookkeepers(response.data);
-    } catch (error) {
-      setError('Error fetching bookkeepers. Please try again.');
-      console.error('Error fetching bookkeepers:', error);
+  setLoading(true);
+  setError('');
+  try {
+    const API_BASE = window.location.hostname === 'localhost' 
+      ? 'http://localhost:5000' 
+      : '';
+    
+    let url = `${API_BASE}/api/bookkeepers?state=${state}`;
+    if (zipCode) {
+      url += `&zipCode=${zipCode}`;
     }
-    setLoading(false);
-  };
+    
+    const response = await axios.get(url);
+    setBookkeepers(response.data);
+  } catch (error) {
+    setError('Error fetching bookkeepers. Please try again.');
+    console.error('Error fetching bookkeepers:', error);
+  }
+  setLoading(false);
+};
 
   // Group bookkeepers by zip code for display
   const groupByZipCode = (bookkeepers) => {

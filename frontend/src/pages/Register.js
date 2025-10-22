@@ -56,44 +56,49 @@ const Register = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+  e.preventDefault();
+  setIsSubmitting(true);
+  
+  try {
+    console.log('Sending registration data:', formData);
     
-    try {
-      console.log('Sending registration data:', formData);
-      
-      const response = await axios.post('/api/bookkeepers/register', formData);
-      
-      console.log('Registration response:', response);
-      
-      setSubmitMessage('Thank you for registering! Your listing will be available soon.');
-      setFormData({
-        fullName: '',
-        phone: '',
-        email: '',
-        address: '',
-        city: '',
-        state: '',
-        zipCode: '',
-        preferredContact: 'email',
-        companyName: '',
-        companyAddress: ''
-      });
-    } catch (error) {
-      console.error('Registration error details:', error);
-      console.error('Error response:', error.response);
-      
-      if (error.response && error.response.data && error.response.data.errors) {
-        setSubmitMessage(`Validation errors: ${error.response.data.errors.join(', ')}`);
-      } else if (error.response && error.response.data && error.response.data.message) {
-        setSubmitMessage(`Error: ${error.response.data.message}`);
-      } else {
-        setSubmitMessage('Sorry, there was an error with your registration. Please try again.');
-      }
-    } finally {
-      setIsSubmitting(false);
+    // Use absolute URL for production
+    const API_BASE = window.location.hostname === 'localhost' 
+      ? 'http://localhost:5000' 
+      : '';
+    
+    const response = await axios.post(`${API_BASE}/api/bookkeepers/register`, formData);
+    
+    console.log('Registration response:', response);
+    
+    setSubmitMessage('Thank you for registering! Your listing will be available soon.');
+    setFormData({
+      fullName: '',
+      phone: '',
+      email: '',
+      address: '',
+      city: '',
+      state: '',
+      zipCode: '',
+      preferredContact: 'email',
+      companyName: '',
+      companyAddress: ''
+    });
+  } catch (error) {
+    console.error('Registration error details:', error);
+    console.error('Error response:', error.response);
+    
+    if (error.response && error.response.data && error.response.data.errors) {
+      setSubmitMessage(`Validation errors: ${error.response.data.errors.join(', ')}`);
+    } else if (error.response && error.response.data && error.response.data.message) {
+      setSubmitMessage(`Error: ${error.response.data.message}`);
+    } else {
+      setSubmitMessage('Sorry, there was an error with your registration. Please try again.');
     }
-  };
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   return (
     <div className="page register">
