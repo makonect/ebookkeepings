@@ -28,11 +28,10 @@ const ZipSearchForm = ({ initialZip = '' }) => {
           title="5-digit zip code"
           required
         />
-        
-        <button type="submit" className="search-btn">
+      </div>
+      <button type="submit" className="search-btn">
           Find Bookkeepers
         </button>
-      </div>
     </form>
   );
 };
