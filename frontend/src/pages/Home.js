@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import ZipSearchForm from '../components/ZipSearchForm';
+// import ZipSearchForm from '../components/ZipSearchForm';
+import ZipSearchForm from '../components/StateZipSearchForm';
 import '../styles/main.css';
 
 const Home = () => {
