@@ -19,11 +19,6 @@ app.use(cors());
 // Routes
 app.use('/api/bookkeepers', bookkeeperRoutes);
 
-// Basic route
-app.get('/', (req, res) => {
-  res.json({ message: 'ebookkeepings API is running!' });
-});
-
 // Contact route with SendGrid
 app.post('/api/contact', async (req, res) => {
   try {
@@ -64,4 +59,13 @@ const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
+});
+
+// Test route to check which code is running
+app.get('/api/debug', (req, res) => {
+  res.json({ 
+    message: 'Debug endpoint',
+    timestamp: new Date().toISOString(),
+    version: '1.0'
+  });
 });
